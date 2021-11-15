@@ -16,37 +16,31 @@ from PIL import Image, ImageTk
 
 CLIENT_SECRET_FILE = "credentials.json"
 
-service = authorize.init(CLIENT_SECRET_FILE)
-
-album_manager = Album(service)
-
-album_iterator = album_manager.list()
-
-def find_album():
+def find_album(album_iterator):
     for n in album_iterator:
         if (n.get("title")=="La LW"):
             return n.get("id")
 
-_id = find_album()
+# url = album_media_list[100].get("baseUrl")
 
-media_manager = Media(service)
+GG = quantumrandom.cached_generator()
 
-album_media_list = list(media_manager.search_album(_id))
-
-
-url = album_media_list[100].get("baseUrl")
-
-math.floor(quantumrandom.randint(0, len(album_media_list), gg))
-
-gg = quantumrandom.cached_generator()
+def init_photos():
+    global album_media_list
+    # url_time = time.time()
+    service = authorize.init(CLIENT_SECRET_FILE)
+    album_manager = Album(service)
+    album_iterator = album_manager.list()
+    _id = find_album(album_iterator)
+    media_manager = Media(service)
+    album_media_list = list(media_manager.search_album(_id))
 
 def getimg(): # random for now
-    n = math.floor(quantumrandom.randint(0, len(album_media_list), gg))
+    n = math.floor(quantumrandom.randint(0, len(album_media_list), GG))
     url = album_media_list[n].get("baseUrl")
     img_url = f"{url}=w{1440}-h{1080}"
     img_bytes = urlopen(img_url).read()
     imgnp = np.array(Image.open(io.BytesIO(img_bytes)))
-    print(n)
     return imgnp
 
 # root = Tk()
@@ -55,15 +49,10 @@ def getimg(): # random for now
 
 # canvas.pack(side='top', fill='both', expand='yes')
 
-im_url = f"{url}=w{1440}-h{1080}"
+# im_url = f"{url}=w{1440}-h{1080}"
 
-img_bytes = urlopen(im_url).read()
-imgnp1 = np.array(Image.open(io.BytesIO(img_bytes)))
-
-
-slm = slmpy.SLMdisplay()
-
-x, y = slm.getSize()
+# img_bytes = urlopen(im_url).read()
+# imgnp1 = np.array(Image.open(io.BytesIO(img_bytes)))
 
 
 def center_y(img, y):
@@ -107,8 +96,36 @@ def center(img, x, y):
     return f_img
 
 
-imgnp2 = getimg()
-slm.updateArray(center(getimg(), x, y))
 
+def init():
+    global slm, x, y
+    slm = slmpy.SLMdisplay()
+    x, y = slm.getSize()
+
+init_photos()
+init()
+
+def test():
+    global stime
+    stime = time.time()
+
+test()
+
+# urllib.error.HTTPError
+
+def show():
+    while True:
+        try:
+            img = getimg()
+        except:
+            init_photos()
+            img = getimg()
+        slm.updateArray(center(img, x, y))
+        time.sleep(15)
+        # if time.time() - url_time >= (3600):  more than one hour have passed
+        #     print("60 minutes have passed")
+        #     init_photos()
+
+show() #starting at 12:05
 
 slm.close()
