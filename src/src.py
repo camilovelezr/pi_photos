@@ -4,15 +4,13 @@ import time
 from tkinter import *
 from urllib.request import urlopen
 
-import google_auth_httplib2
 import numpy as np
 import quantumrandom
 import slmpy
-from gphotospy import album, authorize
+from gphotospy import authorize
 from gphotospy.album import *
-from gphotospy.authorize import get_credentials
 from gphotospy.media import *
-from PIL import Image, ImageTk
+from PIL import Image
 
 CLIENT_SECRET_FILE = "credentials.json"
 
@@ -21,7 +19,6 @@ def find_album(album_iterator):
         if (n.get("title")=="La LW"):
             return n.get("id")
 
-# url = album_media_list[100].get("baseUrl")
 
 GG = quantumrandom.cached_generator()
 
@@ -42,17 +39,6 @@ def getimg(): # random for now
     img_bytes = urlopen(img_url).read()
     imgnp = np.array(Image.open(io.BytesIO(img_bytes)))
     return imgnp
-
-# root = Tk()
-
-# canvas = Canvas(root, widt=800, height=600, bg='white')
-
-# canvas.pack(side='top', fill='both', expand='yes')
-
-# im_url = f"{url}=w{1440}-h{1080}"
-
-# img_bytes = urlopen(im_url).read()
-# imgnp1 = np.array(Image.open(io.BytesIO(img_bytes)))
 
 
 def center_y(img, y):
@@ -96,7 +82,6 @@ def center(img, x, y):
     return f_img
 
 
-
 def init():
     global slm, x, y
     slm = slmpy.SLMdisplay()
@@ -111,7 +96,6 @@ def test():
 
 test()
 
-# urllib.error.HTTPError
 
 def show():
     while True:
