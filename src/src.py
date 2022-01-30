@@ -1,3 +1,4 @@
+#! /home/pi/photos/bin/python
 import io
 import math
 import time
@@ -12,11 +13,13 @@ from gphotospy.album import *
 from gphotospy.media import *
 from PIL import Image
 
-CLIENT_SECRET_FILE = "credentials.json"
+time.sleep(10)
+
+CLIENT_SECRET_FILE = "/home/pi/pi/src/credentials.json"
 
 def find_album(album_iterator):
     for n in album_iterator:
-        if (n.get("title")=="La LW"):
+        if (n.get("title")=="Lampas"):
             return n.get("id")
 
 
@@ -35,7 +38,7 @@ def init_photos():
 def getimg(): # random for now
     n = math.floor(quantumrandom.randint(0, len(album_media_list), GG))
     url = album_media_list[n].get("baseUrl")
-    img_url = f"{url}=w{1440}-h{1080}"
+    img_url = f"{url}=w{800}-h{480}"
     img_bytes = urlopen(img_url).read()
     imgnp = np.array(Image.open(io.BytesIO(img_bytes)))
     return imgnp
@@ -84,18 +87,11 @@ def center(img, x, y):
 
 def init():
     global slm, x, y
-    slm = slmpy.SLMdisplay()
+    slm = slmpy.SLMdisplay(monitor=0)
     x, y = slm.getSize()
 
 init_photos()
 init()
-
-def test():
-    global stime
-    stime = time.time()
-
-test()
-
 
 def show():
     while True:
@@ -105,10 +101,7 @@ def show():
             init_photos()
             img = getimg()
         slm.updateArray(center(img, x, y))
-        time.sleep(15)
-        # if time.time() - url_time >= (3600):  more than one hour have passed
-        #     print("60 minutes have passed")
-        #     init_photos()
+        time.sleep(10)
 
 show() #starting at 12:05
 
